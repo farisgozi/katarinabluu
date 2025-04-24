@@ -1,0 +1,394 @@
+:root {
+    /* --- Skema Warna Light Yellow Emerald --- */
+    --primary-color: #06D6A0; /* Emerald Green */
+    --secondary-color: #F8FFE5; /* Light Yellow */
+    --background-color: #1A202C; /* Dark Slate Gray/Blue - sebagai dasar gelap */
+    --text-color: var(--secondary-color);
+    --text-muted-color: rgba(248, 255, 229, 0.7); /* Light Yellow semi-transparan */
+    --icon-color: rgba(248, 255, 229, 0.8); /* Light Yellow semi-transparan */
+    --border-color: rgba(6, 214, 160, 0.2); /* Emerald semi-transparan */
+    --hover-bg: rgba(6, 214, 160, 0.1); /* Emerald sangat transparan */
+    --active-bg: rgba(6, 214, 160, 0.2); /* Emerald sedikit lebih pekat */
+    --scrollbar-thumb: var(--primary-color);
+    --tooltip-bg: rgba(0, 0, 0, 0.85);
+    --tooltip-text: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.25);
+
+    /* --- Dimensi dan Transisi --- */
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 80px;
+    --transition-speed: 0.3s;
+    --transition-type: cubic-bezier(0.4, 0, 0.2, 1);
+    --content-padding: 2rem;
+    --content-padding-top: 5rem; /* Beri ruang lebih untuk header/toggle */
+    --mobile-breakpoint: 768px;
+}
+
+/* --- Styling Dasar Sidebar --- */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    left: calc(var(--sidebar-width) * -1); /* Sembunyikan di luar layar kiri secara default */
+    top: 0;
+    background: var(--background-color);
+    color: var(--text-color);
+    z-index: 1050; /* Pastikan di atas konten lain */
+    box-shadow: 5px 0 15px var(--shadow-color);
+    transition: all var(--transition-speed) var(--transition-type);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column; /* Susun elemen secara vertikal */
+}
+
+/* --- Scrollbar Styling (Webkit) --- */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+}
+
+/* --- State Sidebar Aktif (Terlihat) --- */
+.sidebar.active {
+    left: 0;
+    transform: translateX(0);
+}
+
+/* --- State Sidebar Collapsed (Menciut) --- */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* --- Perilaku Sidebar di Desktop (Lebih dari 768px) --- */
+@media (min-width: 769px) {
+    .sidebar {
+        left: 0; /* Tampil secara default di desktop */
+        transform: translateX(0);
+    }
+    /* State Inactive (disembunyikan manual di desktop) */
+    .sidebar.inactive {
+        left: calc(var(--sidebar-width) * -1);
+        transform: translateX(0);
+    }
+}
+
+/* --- Sidebar Brand/Logo Area --- */
+.sidebar-brand {
+    padding: 1.5rem 1.5rem;
+    font-size: 1.6rem; /* Sedikit lebih kecil */
+    font-weight: 700; /* Lebih tebal */
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2); /* Background sedikit transparan */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden; /* Untuk menyembunyikan teks saat collapsed */
+    white-space: nowrap; /* Cegah teks wrap */
+    flex-shrink: 0; /* Jangan biarkan brand menyusut */
+}
+
+/* Garis bawah animasi pada brand */
+.sidebar-brand::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 3px; /* Sedikit lebih tebal */
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.4s var(--transition-type);
+    transform-origin: center;
+}
+/* Tampilkan garis bawah saat sidebar tidak collapsed */
+.sidebar:not(.collapsed) .sidebar-brand::after {
+    transform: scaleX(1);
+}
+/* Sembunyikan teks brand saat collapsed */
+.sidebar.collapsed .sidebar-brand span {
+    display: none; /* Sembunyikan teks */
+}
+/* Tampilkan ikon atau inisial saat collapsed (opsional) */
+.sidebar.collapsed .sidebar-brand::before {
+    content: "KR"; /* Contoh Inisial */
+    font-size: 1.5rem;
+    display: block;
+}
+
+/* --- Menu Utama Sidebar --- */
+.sidebar-menu {
+    list-style: none;
+    padding: 0.5rem 0; /* Kurangi padding atas bawah */
+    margin: 0;
+    flex-grow: 1; /* Biarkan menu mengisi ruang tersisa */
+    overflow-y: auto; /* Scroll jika menu panjang */
+    overflow-x: hidden; /* Sembunyikan horizontal scroll */
+}
+
+.sidebar-item {
+    margin: 0.1rem 1rem; /* Kurangi margin vertikal */
+    position: relative;
+}
+
+/* --- Link Item Menu --- */
+.sidebar-link {
+    color: var(--text-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1.5rem; /* Sesuaikan padding */
+    border-radius: 8px; /* Sudut lebih halus */
+    margin: 0.2rem 0;
+    transition: all var(--transition-speed) var(--transition-type);
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap; /* Cegah teks wrap */
+}
+
+/* Indikator aktif di kiri */
+.sidebar-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%; /* Pusatkan vertikal */
+    transform: translateY(-50%) scaleY(0); /* Mulai dari tengah */
+    width: 4px;
+    height: 70%; /* Tinggi indikator */
+    background: var(--primary-color);
+    transition: transform 0.3s var(--transition-type);
+    border-radius: 0 4px 4px 0;
+    transform-origin: center;
+}
+
+/* --- Efek Hover pada Link --- */
+.sidebar-link:hover {
+    color: #ffffff; /* Teks putih solid saat hover */
+    background: var(--hover-bg);
+    transform: translateX(3px); /* Sedikit geser kanan */
+}
+/* Tampilkan indikator saat hover */
+.sidebar-link:hover::before {
+    transform: translateY(-50%) scaleY(1);
+}
+
+/* --- State Aktif pada Link --- */
+.sidebar-link.active {
+    background: var(--active-bg);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow ke dalam */
+}
+/* Pastikan indikator terlihat saat aktif */
+.sidebar-link.active::before {
+    transform: translateY(-50%) scaleY(1);
+}
+
+/* --- Ikon Menu --- */
+.sidebar-icon {
+    margin-right: 1rem;
+    font-size: 1.3rem; /* Sedikit lebih besar */
+    width: 24px;
+    text-align: center;
+    color: var(--icon-color);
+    transition: transform var(--transition-speed) var(--transition-type), color var(--transition-speed) ease;
+    flex-shrink: 0; /* Jangan biarkan ikon menyusut */
+}
+/* Efek pada ikon saat hover/aktif */
+.sidebar-link:hover .sidebar-icon,
+.sidebar-link.active .sidebar-icon {
+    color: var(--primary-color); /* Ubah warna ikon menjadi warna primer */
+    transform: scale(1.1); /* Sedikit perbesar */
+}
+
+/* --- Teks Menu --- */
+.sidebar-text {
+    opacity: 1;
+    transition: opacity var(--transition-speed) var(--transition-type);
+    flex-grow: 1; /* Biarkan teks mengisi ruang */
+    overflow: hidden; /* Sembunyikan jika terlalu panjang */
+    text-overflow: ellipsis; /* Tambahkan elipsis (...) */
+}
+
+/* --- Styling Saat Sidebar Collapsed --- */
+.sidebar.collapsed .sidebar-text {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+.sidebar.collapsed .sidebar-icon {
+    margin-right: 0;
+    width: 100%; /* Ikon mengisi lebar saat collapsed */
+}
+.sidebar.collapsed .sidebar-link {
+    justify-content: center; /* Pusatkan ikon saat collapsed */
+    padding: 0.9rem 0.5rem; /* Sesuaikan padding */
+}
+
+/* --- Tooltip Saat Collapsed --- */
+.sidebar.collapsed .sidebar-link {
+    position: relative; /* Diperlukan untuk positioning tooltip */
+}
+.sidebar.collapsed .sidebar-link::after {
+    content: attr(data-tooltip); /* Ambil teks dari atribut data-tooltip */
+    position: absolute;
+    left: calc(100% + 10px); /* Posisi di kanan item, dengan jarak */
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    padding: 0.4rem 0.8rem; /* Padding tooltip */
+    border-radius: 6px;
+    font-size: 0.85rem; /* Ukuran font tooltip */
+    opacity: 0; /* Sembunyikan secara default */
+    visibility: hidden; /* Sembunyikan dari aksesibilitas */
+    pointer-events: none; /* Jangan ganggu interaksi mouse */
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    white-space: nowrap; /* Pastikan tooltip tidak wrap */
+    z-index: 1060; /* Pastikan di atas elemen lain */
+}
+/* Tampilkan tooltip saat hover di mode collapsed */
+.sidebar.collapsed .sidebar-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- Footer Sidebar --- */
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto; /* Dorong footer ke bawah */
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted-color);
+    flex-shrink: 0; /* Jangan biarkan footer menyusut */
+    white-space: nowrap; /* Cegah teks wrap */
+    overflow: hidden; /* Sembunyikan saat collapsed */
+}
+/* Sembunyikan teks footer saat collapsed */
+.sidebar.collapsed .sidebar-footer span {
+    display: none;
+}
+/* Tampilkan ikon atau info singkat saat collapsed (opsional) */
+.sidebar.collapsed .sidebar-footer::before {
+    content: "©"; /* Contoh ikon copyright */
+    font-size: 1rem;
+    display: block;
+}
+
+/* --- Tombol Toggle Sidebar --- */
+.sidebar-toggle {
+    position: fixed;
+    top: 1rem; /* Jarak dari atas */
+    left: 1rem; /* Jarak dari kiri default */
+    z-index: 1051; /* Di atas sidebar sedikit */
+    border: none;
+    background: var(--background-color); /* Warna sama dengan sidebar */
+    color: var(--primary-color); /* Warna ikon toggle */
+    font-size: 1.6rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px; /* Sudut lebih membulat */
+    cursor: pointer;
+    transition: all 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+.sidebar-toggle:hover {
+    background: var(--primary-color); /* Warna primer saat hover */
+    color: var(--background-color); /* Warna background saat hover */
+    box-shadow: 0 6px 15px rgba(6, 214, 160, 0.4); /* Shadow lebih jelas */
+    transform: translateY(-2px); /* Efek angkat sedikit */
+}
+.sidebar-toggle:active {
+    transform: translateY(0); /* Kembali saat diklik */
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+.sidebar-toggle i {
+    transition: transform 0.3s ease; /* Transisi untuk ikon */
+}
+
+/* --- Penyesuaian Posisi Toggle Button --- */
+/* Mobile: Saat sidebar aktif, geser tombol ke kanan */
+@media (max-width: 768px) {
+    .sidebar.active ~ .sidebar-toggle,
+    .sidebar.active + .sidebar-toggle { /* Selector + atau ~ tergantung struktur HTML */
+        left: calc(var(--sidebar-width) + 1rem); /* Posisi di kanan sidebar + jarak */
+        background: var(--primary-color); /* Ubah background saat sidebar aktif */
+        color: var(--background-color);
+    }
+}
+/* Desktop: Sesuaikan posisi berdasarkan state sidebar */
+@media (min-width: 769px) {
+    /* Default (sidebar visible & expanded) */
+    .sidebar:not(.inactive):not(.collapsed) ~ .sidebar-toggle,
+    .sidebar:not(.inactive):not(.collapsed) + .sidebar-toggle {
+        left: calc(var(--sidebar-width) + 1rem);
+    }
+    /* Saat sidebar collapsed */
+    .sidebar.collapsed ~ .sidebar-toggle,
+    .sidebar.collapsed + .sidebar-toggle {
+        left: calc(var(--sidebar-collapsed-width) + 1rem);
+    }
+    /* Saat sidebar inactive (hidden) */
+    .sidebar.inactive ~ .sidebar-toggle,
+    .sidebar.inactive + .sidebar-toggle {
+        left: 1rem; /* Kembali ke posisi awal */
+    }
+}
+
+/* --- Content Wrapper (Styling untuk area konten utama) --- */
+.content-wrapper {
+    min-height: 100vh;
+    padding: var(--content-padding);
+    padding-top: var(--content-padding-top); /* Beri ruang untuk header/toggle */
+    margin-left: 0; /* Default margin 0 untuk mobile */
+    background-color: #f4f7f6; /* Warna background konten yang netral */
+    transition: margin-left var(--transition-speed) var(--transition-type);
+    position: relative;
+    z-index: 1;
+}
+/* Penyesuaian margin konten di Desktop */
+@media (min-width: 769px) {
+    /* Default (sidebar visible & expanded) */
+    .content-wrapper {
+        margin-left: var(--sidebar-width);
+    }
+    /* Saat sidebar collapsed */
+    .content-wrapper.collapsed-sidebar {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+    /* Saat sidebar inactive (hidden) */
+    .content-wrapper.shifted {
+        margin-left: 0;
+    }
+}
+
+/* --- Animasi Item Menu (Fade In) --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-15px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+/* Terapkan animasi saat sidebar tidak collapsed */
+.sidebar:not(.collapsed) .sidebar-item {
+    animation: fadeIn 0.4s forwards var(--transition-type);
+    opacity: 0; /* Mulai dari transparan */
+}
+/* Beri delay berbeda untuk setiap item */
+.sidebar:not(.collapsed).sidebar-item:nth-child(1) { animation-delay: 0.1s; }
+.sidebar:not(.collapsed).sidebar-item:nth-child(2) { animation-delay: 0.2s; }
+.sidebar:not(.collapsed).sidebar-item:nth-child(3) { animation-delay: 0.3s; }

@@ -1,0 +1,94 @@
+@media print {
+    @page {
+        size: A4;
+        margin: 1.5cm;
+    }
+    /* Hide ALL navigation elements when printing */
+    .sidebar,
+    .sidebar-toggle,
+    .sidebar-brand,
+    .sidebar-menu,
+    .sidebar-item,
+    .sidebar-link,
+    .sidebar-icon,
+    .sidebar-text,
+    .sidebar-footer,
+    #sidebar,
+    #sidebarToggle,
+    .navbar,
+    .nav-link,
+    .hamburger-menu,
+    .no-print,
+    .sidebar-wrapper,
+    .navbar-toggler,
+    .navbar-collapse,
+    button[data-bs-toggle="collapse"],
+    .offcanvas,
+    .offcanvas-collapse,
+    [class*="sidebar"],
+    [id*="sidebar"],
+    [class*="menu"],
+    [class*="nav"],
+    [class*="navbar"],
+    [class*="bi"],
+    [class^="bi"],
+    .bi,
+    /* Additional selectors for navigation elements */
+    .nav-toggle,
+    .menu-toggle,
+    .menu-button,
+    .menu-icon,
+    .toggle-button,
+    .toggle-icon,
+    /* Hide ALL icons and buttons */
+    [class*="icon"],
+    [class*="btn"],
+    button:not([type="submit"]) {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        position: absolute !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+        background: white;
+    }
+    .content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    .report {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        page-break-inside: avoid;
+        border-collapse: collapse;
+    }
+    .table th,
+    .table td {
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+    }
+    h2, h4, h5 {
+        page-break-after: avoid;
+    }
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+}
+.report {
+    max-width: 21cm;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+}

@@ -1,0 +1,244 @@
+:root {
+    --primary-color: #06D6A0; 
+    --secondary-color: #F8FFE5; 
+    --background-color: #1A202C; 
+    --text-color: var(--secondary-color);
+    --text-muted-color: rgba(248, 255, 229, 0.7); 
+    --icon-color: rgba(248, 255, 229, 0.8); 
+    --border-color: rgba(6, 214, 160, 0.2); 
+    --hover-bg: rgba(6, 214, 160, 0.1); 
+    --active-bg: rgba(6, 214, 160, 0.2); 
+    --scrollbar-thumb: var(--primary-color);
+    --tooltip-bg: rgba(0, 0, 0, 0.85);
+    --tooltip-text: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1); 
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 80px;
+    --transition-speed: 0.3s;
+    --transition-type: cubic-bezier(0.4, 0, 0.2, 1);
+    --content-padding: 2rem;
+    --content-padding-top: 5rem; 
+    --mobile-breakpoint: 768px;
+    --content-bg: #f4f7f6; 
+    --card-bg: #ffffff;
+    --text-dark: #1A202C; 
+    --text-light: #5a6a85; 
+    --border-radius: 0.5rem; 
+    --teal-color: #16a085; 
+    --yellow-color: #f39c12; 
+}
+
+
+/* --- Styling Global & Content Wrapper --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--content-bg, #f4f7f6); /* Fallback jika var tidak ada */
+}
+
+.content-wrapper {
+    min-height: 100vh;
+    padding: var(--content-padding, 1.5rem);
+    padding-top: var(--content-padding-top, 5rem); 
+    margin-left: 0; /* Default untuk mobile */
+    transition: margin-left var(--transition-speed, 0.3s) var(--transition-type, ease);
+    position: relative;
+    z-index: 1;
+}
+/* Penyesuaian margin konten di Desktop (sesuai state sidebar) */
+@media (min-width: 769px) {
+    .content-wrapper {
+        margin-left: var(--sidebar-width, 280px);
+    }
+    .content-wrapper.collapsed-sidebar {
+        margin-left: var(--sidebar-collapsed-width, 80px);
+    }
+    .content-wrapper.shifted { /* Saat sidebar inactive/hidden */
+        margin-left: 0;
+    }
+}
+@media (max-width: 768px) {
+     .content-wrapper {
+         padding: 1rem;
+         padding-top: var(--content-padding-top, 5rem); 
+     }
+}
+
+/* --- Styling Card --- */
+.card {
+    border: none; /* Hapus border default */
+    border-radius: var(--border-radius, 0.5rem);
+    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.08));
+    margin-bottom: 1.5rem;
+    background-color: var(--card-bg, #ffffff);
+}
+.card-header {
+    background-color: transparent; /* Header transparan */
+    border-bottom: 1px solid var(--border-color, rgba(6, 214, 160, 0.2));
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: var(--text-dark, #1A202C);
+}
+.card-title {
+     margin-bottom: 0;
+     font-size: 1.1rem;
+}
+.card-body {
+    padding: 1.5rem;
+}
+
+/* --- Styling Kartu Ringkasan (Summary Cards) --- */
+.summary-card {
+    position: relative;
+    overflow: hidden; /* Untuk pseudo-element */
+    border-top: 4px solid transparent; /* Border atas sbg indikator warna */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px var(--shadow-color, rgba(0, 0, 0, 0.1));
+}
+.summary-card .card-body {
+    display: flex;
+    align-items: center; /* Sejajarkan ikon dan teks */
+}
+.summary-card .summary-icon {
+    /* PERBAIKAN: Tetapkan width & height, gunakan flexbox untuk centering */
+    width: 64px; 
+    height: 64px; 
+    font-size: 2.2rem; /* Sesuaikan ukuran ikon jika perlu */
+    border-radius: 50%; 
+    margin-right: 1.5rem;
+    color: #fff; 
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* padding: 1rem; Dihapus */
+}
+.summary-card .summary-content h5 { /* Judul (Total Penjualan, dll) */
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-light, #5a6a85);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+.summary-card .summary-content .value { /* Angka (Rp xxx, jumlah transaksi) */
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-dark, #1A202C);
+    margin-bottom: 0.25rem;
+}
+.summary-card .summary-content .period { /* Teks periode */
+    font-size: 0.8rem;
+    color: var(--text-light, #5a6a85);
+}
+
+/* Warna spesifik untuk summary cards */
+.summary-card.sales { border-top-color: var(--primary-color, #06D6A0); }
+.summary-card.sales .summary-icon { background-color: var(--primary-color, #06D6A0); }
+
+.summary-card.transactions { border-top-color: var(--teal-color, #16a085); }
+.summary-card.transactions .summary-icon { background-color: var(--teal-color, #16a085); }
+
+.summary-card.items { border-top-color: var(--yellow-color, #f39c12); }
+.summary-card.items .summary-icon { background-color: var(--yellow-color, #f39c12); }
+
+/* --- Styling Tombol --- */
+.btn {
+    border-radius: var(--border-radius, 0.5rem);
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.btn-primary {
+    background-color: var(--primary-color, #06D6A0);
+    border-color: var(--primary-color, #06D6A0);
+    color: var(--background-color, #1A202C); /* Teks gelap di atas emerald */
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #05b88a; /* Warna emerald sedikit lebih gelap */
+    border-color: #05b88a;
+    color: var(--background-color, #1A202C);
+    box-shadow: 0 4px 8px rgba(6, 214, 160, 0.3);
+}
+.btn-outline-primary {
+    color: var(--primary-color, #06D6A0);
+    border-color: var(--primary-color, #06D6A0);
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--hover-bg, rgba(6, 214, 160, 0.1));
+    color: var(--primary-color, #06D6A0);
+    border-color: var(--primary-color, #06D6A0);
+}
+
+/* --- Styling Form Filter --- */
+.form-label {
+    font-weight: 500;
+    color: var(--text-light, #5a6a85);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.form-control, .form-select {
+    border-radius: var(--border-radius, 0.5rem);
+    border: 1px solid var(--border-color, rgba(6, 214, 160, 0.2));
+    padding: 0.6rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color, #06D6A0);
+    box-shadow: 0 0 0 0.2rem var(--hover-bg, rgba(6, 214, 160, 0.2));
+    outline: none;
+}
+
+/* --- Styling Tabel --- */
+.table {
+    border-collapse: separate; /* Pisahkan border untuk radius */
+    border-spacing: 0;
+    margin-bottom: 0; /* Hapus margin bawah default */
+}
+.table thead th {
+    background-color: var(--content-bg, #f4f7f6); /* Background header tabel */
+    border-bottom: 2px solid var(--border-color, rgba(6, 214, 160, 0.2));
+    color: var(--text-dark, #1A202C);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 0.9rem 1rem;
+}
+.table tbody td {
+    padding: 0.9rem 1rem;
+    vertical-align: middle;
+    color: var(--text-light, #5a6a85);
+    border-top: 1px solid var(--border-color, rgba(6, 214, 160, 0.1)); /* Border lebih tipis */
+}
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+     background-color: rgba(230, 245, 241, 0.3); /* Warna belang sangat halus */
+}
+.table-hover > tbody > tr:hover > * {
+    background-color: var(--hover-bg, rgba(6, 214, 160, 0.05)); /* Hover lebih halus */
+    color: var(--text-dark, #1A202C);
+}
+.table tfoot th {
+    background-color: var(--background-color, #1A202C); /* Footer gelap */
+    color: var(--text-color, #F8FFE5); /* Teks terang */
+    font-weight: 700;
+    border-top: 2px solid var(--primary-color, #06D6A0);
+}
+.table-responsive {
+     border-radius: var(--border-radius, 0.5rem);
+     overflow: hidden; /* Agar radius terlihat */
+}
+
+/* --- Styling Chart Canvas --- */
+#salesChart, #popularItemsChart {
+    min-height: 300px; /* Minimal tinggi chart */
+    max-height: 400px; /* Maksimal tinggi chart */
+}
+
+/* Utility Classes */
+.text-primary-theme { color: var(--primary-color, #06D6A0); }
+.text-teal-theme { color: var(--teal-color, #16a085); }
+.text-yellow-theme { color: var(--yellow-color, #f39c12); }
+.fw-bold { font-weight: 700 !important; }
+
