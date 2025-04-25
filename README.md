@@ -1,4 +1,4 @@
-# Dokumentasi Aplikasi Kasir Restoran
+# Dokumentasi Aplikasi Wlea Wleo
 
 ## Daftar Isi
 1. [Gambaran Umum](#gambaran-umum)
