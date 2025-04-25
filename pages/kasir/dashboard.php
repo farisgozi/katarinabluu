@@ -349,7 +349,6 @@ $revenue = $revenue_data['total_revenue'] ?? 0;
                                             <th>Kode Pesanan</th>
                                             <th>Meja</th>
                                             <th>Item Pesanan</th>
-                                            <th>Waktu Pesan</th>
                                             <th>Total</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -370,7 +369,6 @@ $revenue = $revenue_data['total_revenue'] ?? 0;
                                                 <td><?php echo htmlspecialchars(implode(', ', $kode_pesanan_array)); ?></td>
                                                 <td><?php echo htmlspecialchars($order['Nomeja']); ?></td>
                                                 <td><?php echo nl2br(htmlspecialchars($order['items'])); ?></td>
-                                                <td><?php echo htmlspecialchars(date('d M Y H:i', strtotime($order['created_at']))); ?></td>
                                                 <td>Rp <?php echo number_format($order['total_amount'] ?? 0, 0, ',', '.'); ?></td>
                                                 <td>
                                                 <?php foreach($idpesanan_array as $index => $idpesanan): ?>

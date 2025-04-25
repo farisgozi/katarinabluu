@@ -70,144 +70,47 @@ $items_result->data_seek(0); // Reset result pointer
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation - Kasir Resto</title>
+    <title>Detail Pesanan - Kasir Resto</title>
     <link href="../../assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../assets/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../../css/sidebar.css" rel="stylesheet"> <!-- Assuming sidebar CSS is needed -->
     <style>
-        /* Base styling for both screen and print */
+        /* Keep only necessary base styles if any, or remove entirely if Bootstrap covers it */
         body {
             background-color: #f8f9fa;
         }
-        
-        .confirmation {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: white;
-            font-family: 'Arial', sans-serif;
+
+        /* Remove specific .confirmation styles */
+        /* Remove @media screen styles targeting .content-wrapper if they conflict */
+        /* Remove .confirmation-header, .confirmation-info specific layout styles */
+        /* Remove .items-table specific layout styles if Bootstrap table classes are used */
+        /* Remove .signature-section styles */
+
+        /* Ensure content wrapper works with sidebar */
+        .content-wrapper {
+            margin-left: var(--sidebar-width);
+            padding: var(--content-padding);
+            padding-top: var(--content-padding-top);
+            min-height: 100vh;
+            transition: all var(--transition-speed) var(--transition-type);
+            position: relative;
+            z-index: 1;
         }
 
-        /* Print-specific styles */
-        @media print {
-            @page {
-                size: A4 portrait;
-                margin: 10mm;
-            }
-            
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: #fff;
-            }
-            
-            .no-print, .sidebar, .content-wrapper-padding {
-                display: none !important;
-            }
-            
+        .content-wrapper.shifted {
+            margin-left: 0;
+        }
+
+        .content-wrapper.collapsed-sidebar {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        @media (max-width: 768px) {
             .content-wrapper {
-                margin-left: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: var(--content-padding-top);
             }
-            
-            .confirmation {
-                width: 100%;
-                max-width: 100%;
-                box-shadow: none !important;
-                border: none !important;
-                padding: 0;
-                margin: 0;
-            }
-            
-            /* Adjust font sizes for print */
-            .confirmation h4 {
-                font-size: 24pt;
-                margin-bottom: 10mm;
-            }
-            
-            .confirmation table {
-                width: 100%;
-                margin-bottom: 5mm;
-                font-size: 12pt;
-            }
-            
-            .confirmation td, .confirmation th {
-                padding: 2mm 0;
-                font-size: 12pt;
-            }
-            
-            .confirmation p, .confirmation div {
-                font-size: 12pt;
-                line-height: 1.5;
-            }
-            
-            .confirmation small {
-                font-size: 10pt;
-            }
-            
-            .confirmation .text-center {
-                text-align: center;
-            }
-            
-            .border-top, .border-bottom {
-                border-color: #000 !important;
-                border-width: 1px !important;
-            }
-            
-            /* Make sure the items section grows to fill available space */
-            .items-section {
-                min-height: 40vh;
-            }
-
-            .signature-section {
-                margin-top: 20mm;
-            }
-        }
-        
-        /* Styling for the screen view */
-        @media screen {
-            .content-wrapper {
-                margin-left: 280px;
-                margin-top: 20px;
-                padding: 20px;
-            }
-            
-            @media (max-width: 768px) {
-                .content-wrapper {
-                    margin-left: 0;
-                    padding: 15px;
-                }
-            }
-            
-            .confirmation {
-                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-                border: 1px solid #dee2e6;
-            }
-        }
-        
-        /* Common styling for both screen and print */
-        .confirmation-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .confirmation-info {
-            margin-bottom: 15px;
-        }
-        
-        .items-table {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        
-        .signature-section {
-            margin-top: 50px;
-        }
-
-        .signature-line {
-            border-top: 1px solid #000;
-            width: 150px;
-            margin: 10px auto;
         }
     </style>
 </head>
@@ -215,124 +118,90 @@ $items_result->data_seek(0); // Reset result pointer
     <?php include '../../components/sidebar.php'; ?>
 
     <div class="content-wrapper">
-        <style>
-            .content-wrapper {
-                margin-left: var(--sidebar-width);
-                padding: var(--content-padding);
-                padding-top: var(--content-padding-top);
-                min-height: 100vh;
-                transition: all var(--transition-speed) var(--transition-type);
-                position: relative;
-                z-index: 1;
-            }
-            
-            .content-wrapper.shifted {
-                margin-left: 0;
-            }
-            
-            .content-wrapper.collapsed-sidebar {
-                margin-left: var(--sidebar-collapsed-width);
-            }
-            
-            @media (max-width: 768px) {
-                .content-wrapper {
-                    margin-left: 0;
-                    padding: 1rem;
-                    padding-top: var(--content-padding-top);
-                }
-            }
-        </style>
-        <div class="no-print mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>Order Confirmation</h2>
+        <!-- Remove inline style block for content-wrapper as it's now in <head> -->
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Detail Pesanan #<?php echo htmlspecialchars($order['idpesanan']); ?></h2>
                 <div>
                     <a href="edit_order.php?id=<?php echo $order_id; ?>" class="btn btn-warning">
-                        <i class="bi bi-pencil"></i> Edit Order
+                        <i class="bi bi-pencil"></i> Edit Pesanan
                     </a>
-                    <button onclick="window.print()" class="btn btn-primary">
-                        <i class="bi bi-printer"></i> Print Confirmation
-                    </button>
-                    <a href="dashboard.php" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    <a href="print_confirmation.php?id=<?php echo $order_id; ?>" target="_blank" class="btn btn-info">
+                        <i class="bi bi-printer"></i> Cetak Konfirmasi
+                    </a>
+                    <a href="orders.php" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Kembali
                     </a>
                 </div>
             </div>
-        </div>
 
-        <div class="confirmation">
-            <div class="confirmation-header">
-                <h4 class="mb-1">Kasir Resto</h4>
-                <p class="mb-0">Jl. Restaurant No. 123</p>
-                <p>Phone: (123) 456-7890</p>
-                <h5 class="mt-3">ORDER CONFIRMATION</h5>
-            </div>
-
-            <div class="confirmation-info">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="mb-0">Order #<?php echo htmlspecialchars($order['idpesanan']); ?></p>
-                        <p class="mb-0">Table #<?php echo htmlspecialchars($order['Nomeja']); ?></p>
-                        <!-- Fixed customer name display here -->
-                        <p>Customer: <?php echo htmlspecialchars($order['Namapelanggan']); ?></p>
-                    </div>
-                    <div class="col-6 text-end">
-                        <p>Date: <?php echo date('d/m/Y H:i', strtotime($order['order_date'])); ?></p>
-                        <p>Waiter: <?php echo htmlspecialchars($user['nama']); ?></p>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    Informasi Pesanan
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <p><strong>Nomor Pesanan:</strong> <?php echo htmlspecialchars($order['idpesanan']); ?></p>
+                            <p><strong>Meja:</strong> <?php echo htmlspecialchars($order['Nomeja']); ?></p>
+                            <p><strong>Pelanggan:</strong> <?php echo htmlspecialchars($order['Namapelanggan']); ?></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <p><strong>Tanggal:</strong> <?php echo date('d/m/Y H:i', strtotime($order['order_date'])); ?></p>
+                            <p><strong>Waiter:</strong> <?php echo htmlspecialchars($user['nama']); ?></p>
+                            <p><strong>Status:</strong> <span class="badge bg-<?php echo $order['status'] === 'Active' ? 'success' : 'secondary'; ?>"><?php echo htmlspecialchars($order['status']); ?></span></p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="border-top border-bottom py-3 mb-3 items-section">
-                <table class="items-table table-sm table-borderless mb-0">
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th class="text-end">Qty</th>
-                            <th class="text-end">Price</th>
-                            <th class="text-end">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($item = $items_result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($item['nama']); ?></td>
-                                <td class="text-end"><?php echo $item['jumlah']; ?></td>
-                                <td class="text-end">Rp <?php echo number_format($item['harga'], 0, ',', '.'); ?></td>
-                                <td class="text-end">Rp <?php echo number_format($item['subtotal'], 0, ',', '.'); ?></td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mb-4">
-                <div class="row fw-bold">
-                    <div class="col-6">Total Amount</div>
-                    <div class="col-6 text-end">Rp <?php echo number_format($total, 0, ',', '.'); ?></div>
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    Item Pesanan
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col" class="text-end">Jumlah</th>
+                                    <th scope="col" class="text-end">Harga Satuan</th>
+                                    <th scope="col" class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $items_result->data_seek(0); // Reset pointer again just in case ?>
+                                <?php while ($item = $items_result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($item['nama']); ?></td>
+                                        <td class="text-end"><?php echo $item['jumlah']; ?></td>
+                                        <td class="text-end">Rp <?php echo number_format($item['harga'], 0, ',', '.'); ?></td>
+                                        <td class="text-end">Rp <?php echo number_format($item['subtotal'], 0, ',', '.'); ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                            <tfoot class="table-light fw-bold">
+                                <tr>
+                                    <td colspan="3" class="text-end">Total Keseluruhan</td>
+                                    <td class="text-end">Rp <?php echo number_format($total, 0, ',', '.'); ?></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="signature-section row text-center">
-                <div class="col-6">
-                    <p>Customer</p>
-                    <div class="signature-line"></div>
-                    <!-- Perbaikan untuk menampilkan nama pelanggan -->
-                    <p><?php echo isset($order['Namapelanggan']) ? htmlspecialchars($order['Namapelanggan']) : 'Guest'; ?></p>
-                </div>
-                <div class="col-6">
-                    <p>Waiter</p>
-                    <div class="signature-line"></div>
-                    <p><?php echo htmlspecialchars($user['nama']); ?></p>
-                </div>
-            </div>
+            <!-- Removed confirmation structure -->
+            <!-- Removed signature section -->
+            <!-- Removed confirmation footer -->
 
-            <div class="confirmation-footer text-center mt-4">
-                <p class="mb-0">Thank you for choosing Kasir Resto!</p>
-                <small>This is not a payment receipt</small>
-            </div>
-        </div>
-    </div>
+        </div> <!-- End container-fluid -->
+    </div> <!-- End content-wrapper -->
 
     <script src="../../assets/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include sidebar JS if needed -->
+    <!-- <script src="../../js/sidebar.js"></script> -->
 </body>
 </html>
