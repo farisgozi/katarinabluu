@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $payment_amount = clean_input($_POST['payment_amount']);
 
     if ($payment_amount < $total) {
-        $error = "Payment amount must be at least Rp " . number_format($total, 0, ',', '.');
+        $error = "Total harga pembayaran setidaknya harus senilai Rp " . number_format($total, 0, ',', '.');
     } else {
         // Start transaction
         $conn->begin_transaction();
@@ -113,8 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Commit transaction
             $conn->commit();
             
-            // Redirect to print receipt
-            header("Location: print_receipt.php?id=" . $order_id);
+            // Redirect to success payment page
+            header("Location: success_payment.php?id=" . $order_id);
             exit();
         } catch (Exception $e) {
             // Rollback transaction on error
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Process Payment - Kasir Resto</title>
+    <title>Proses Pembayaran - Kasir Resto</title>
     <link href="../../assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../assets/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
@@ -171,16 +171,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title mb-4">Process Payment</h2>
+                        <h2 class="card-title mb-4">Proses Pembayaran</h2>
                         
                         <?php if (isset($error)): ?>
                             <div class="alert alert-danger"><?php echo $error; ?></div>
                         <?php endif; ?>
 
                         <div class="mb-4">
-                            <h5>Order Details</h5>
-                            <p class="mb-1">Table: <?php echo htmlspecialchars($order['Nomeja']); ?></p>
-                            <p class="mb-1">Order Code: <?php echo htmlspecialchars($order['kode_pesanan']); ?></p>
+                            <h5>Detail Pesanan</h5>
+                            <p class="mb-1">Meja: <?php echo htmlspecialchars($order['Nomeja']); ?></p>
+                            <p class="mb-1">Kode Pesanan: <?php echo htmlspecialchars($order['kode_pesanan']); ?></p>
                         </div>
 
                         <div class="mb-4">
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <tr>
                                         <th>Item</th>
                                         <th class="text-end">Qty</th>
-                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Harga</th>
                                         <th class="text-end">Subtotal</th>
                                     </tr>
                                 </thead>
@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <form method="POST" class="needs-validation" novalidate>
                             <div class="mb-3">
-                                <label for="payment_amount" class="form-label">Payment Amount</label>
+                                <label for="payment_amount" class="form-label">Harga Bayar</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
                                     <input type="number" class="form-control" id="payment_amount" name="payment_amount" required min="<?php echo $total; ?>">
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Process Payment</button>
+                                <button type="submit" class="btn btn-primary">Proses Pembayaran</button>
                                 <a href="dashboard.php" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
