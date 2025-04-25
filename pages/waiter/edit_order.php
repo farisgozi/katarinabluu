@@ -133,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+
 // Ambil item pesanan saat ini (setelah potensi redirect karena error POST)
 // Gunakan kode_pesanan dari $order yang sudah diambil di awal
 $order_items = []; // Kosongkan array sebelum mengisi ulang
