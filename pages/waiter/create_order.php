@@ -53,10 +53,7 @@ $menu_query = "SELECT * FROM menu ORDER BY Namamenu";
 $menu_result = $conn->query($menu_query);
 if ($menu_result === false) { die("Error fetching menu: " . $conn->error); }
 
-// Get customers
-$customers_query = "SELECT * FROM pelanggan ORDER BY Namapelanggan";
-$customers_result = $conn->query($customers_query);
-if ($customers_result === false) { die("Error fetching customers: " . $conn->error); }
+// Tidak perlu query pelanggan lagi karena kita akan membuat pelanggan baru
 // --- AKHIR VALIDASI & GET DATA AWAL ---
 
 
@@ -67,11 +64,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->begin_transaction();
 
     try {
-        // Validate customer selection
-        if (!isset($_POST['customer_id']) || empty($_POST['customer_id'])) {
-            throw new Exception("Silakan pilih pelanggan.");
+        // Validate and create new customer
+        if (!isset($_POST['nama_pelanggan']) || empty(trim($_POST['nama_pelanggan']))) {
+            throw new Exception("Nama pelanggan wajib diisi.");
         }
-        $customer_id = $_POST['customer_id'];
+        
+        // Prepare customer data
+        $nama_pelanggan = trim($_POST['nama_pelanggan']);
+        $no_hp = isset($_POST['no_hp']) ? trim($_POST['no_hp']) : null;
+        $alamat = isset($_POST['alamat']) ? trim($_POST['alamat']) : null;
+        $jenis_kelamin = isset($_POST['jenis_kelamin']) ? trim($_POST['jenis_kelamin']) : null;
+        
+        // Insert new customer
+        $create_customer_query = "INSERT INTO pelanggan (Namapelanggan, Nohp, alamat, Jeniskelamin) VALUES (?, ?, ?, ?)";
+        $stmt_customer = $conn->prepare($create_customer_query);
+        if ($stmt_customer === false) {
+            throw new Exception("Error preparing customer statement: " . $conn->error);
+        }
+        $stmt_customer->bind_param("ssss", $nama_pelanggan, $no_hp, $alamat, $jenis_kelamin);
+        if (!$stmt_customer->execute()) {
+            throw new Exception("Error creating customer: " . $stmt_customer->error);
+        }
+        $customer_id = $stmt_customer->insert_id;
+        $stmt_customer->close();
 
         // Validate menu items & prepare data
         $order_items_data = [];
@@ -452,20 +467,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="main-card customer-select-section">
                             <div class="card-body">
-                                <label for="customer_id" class="form-label fw-bold">Pilih Pelanggan</label>
-                                <select class="form-select" name="customer_id" id="customer_id" required>
-                                    <option value="" disabled selected>-- Pilih nama pelanggan --</option>
-                                    <?php if ($customers_result && $customers_result->num_rows > 0): ?>
-                                        <?php while ($customer = $customers_result->fetch_assoc()): ?>
-                                            <option value="<?php echo $customer['idpelanggan']; ?>">
-                                                <?php echo htmlspecialchars($customer['Namapelanggan']); ?>
-                                            </option>
-                                        <?php endwhile; ?>
-                                        <?php $customers_result->data_seek(0); // Reset pointer jika perlu ?>
-                                    <?php else: ?>
-                                        <option value="" disabled>Tidak ada data pelanggan</option>
-                                    <?php endif; ?>
+                                <div class="mb-3">
+                                <label for="nama_pelanggan" class="form-label fw-bold">Nama Pelanggan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="nama_pelanggan" id="nama_pelanggan" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="no_hp" class="form-label">Nomor HP</label>
+                                <input type="text" class="form-control" name="no_hp" id="no_hp">
+                            </div>
+                            <div class="mb-3">
+                                <label for="alamat" class="form-label">Alamat</label>
+                                <textarea class="form-control" name="alamat" id="alamat" rows="2"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                                <select class="form-select" name="jenis_kelamin" id="jenis_kelamin">
+                                    <option value="">-- Pilih jenis kelamin --</option>
+                                    <option value="laki-laki">Laki-laki</option>
+                                    <option value="perempuan">Perempuan</option>
                                 </select>
+                            </div>
                             </div>
                         </div>
 
@@ -628,53 +649,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 const btnMinus = card.querySelector('.btn-minus');
                 const btnPlus = card.querySelector('.btn-plus');
 
-                // Pastikan semua elemen ada
-                if (!quantityInput || !btnMinus || !btnPlus) return; 
-
-                // Inisialisasi data item jika belum ada
-                if (!currentOrder[menuId]) {
-                     currentOrder[menuId] = { name: menuName, price: menuPrice, quantity: 0 };
-                 }
-
-                // Fungsi update dari input
-                const updateFromInput = () => {
-                     let quantity = parseInt(quantityInput.value, 10);
-                    if (isNaN(quantity) || quantity < 0) {
-                        quantity = 0;
-                        quantityInput.value = 0; // Reset input jika tidak valid
-                    }
-                     // Pastikan objek ada sebelum set quantity
-                     if (currentOrder[menuId]) {
-                        currentOrder[menuId].quantity = quantity;
-                        updateOrderSummary();
-                     }
+                // Inisialisasi item di currentOrder
+                currentOrder[menuId] = {
+                    name: menuName,
+                    price: menuPrice,
+                    quantity: parseInt(quantityInput.value) || 0
                 };
 
-                // Event listener untuk input quantity (change dan input untuk lebih responsif)
-                quantityInput.addEventListener('change', updateFromInput);
-                quantityInput.addEventListener('input', updateFromInput); // Update saat mengetik
+                // Event listener untuk input manual
+                quantityInput.addEventListener('change', function() {
+                    let value = parseInt(this.value) || 0;
+                    if (value < 0) value = 0;
+                    this.value = value;
+                    currentOrder[menuId].quantity = value;
+                    updateOrderSummary();
+                });
 
                 // Event listener untuk tombol minus
                 btnMinus.addEventListener('click', function() {
-                    let currentQuantity = parseInt(quantityInput.value, 10);
-                    if (isNaN(currentQuantity)) currentQuantity = 0;
-                    if (currentQuantity > 0) {
-                        quantityInput.value = currentQuantity - 1;
-                        updateFromInput(); // Panggil fungsi update
+                    let value = parseInt(quantityInput.value) || 0;
+                    if (value > 0) {
+                        value--;
+                        quantityInput.value = value;
+                        currentOrder[menuId].quantity = value;
+                        updateOrderSummary();
                     }
                 });
 
                 // Event listener untuk tombol plus
                 btnPlus.addEventListener('click', function() {
-                    let currentQuantity = parseInt(quantityInput.value, 10);
-                     if (isNaN(currentQuantity)) currentQuantity = 0;
-                    quantityInput.value = currentQuantity + 1;
-                     updateFromInput(); // Panggil fungsi update
+                    let value = parseInt(quantityInput.value) || 0;
+                    value++;
+                    quantityInput.value = value;
+                    currentOrder[menuId].quantity = value;
+                    updateOrderSummary();
                 });
             });
 
-             // Panggil sekali di awal untuk memastikan state awal benar
-             updateOrderSummary(); 
+            // Validasi form sebelum submit
+            document.getElementById('createOrderForm').addEventListener('submit', function(e) {
+                let hasItems = false;
+                for (let menuId in currentOrder) {
+                    if (currentOrder[menuId].quantity > 0) {
+                        hasItems = true;
+                        break;
+                    }
+                }
+                if (!hasItems) {
+                    e.preventDefault();
+                    alert('Pilih minimal satu item menu dengan jumlah lebih dari 0.');
+                }
+            });
         });
     </script>
 </body>
