@@ -13,11 +13,13 @@ Aplikasi Kasir Restoran adalah sistem manajemen restoran berbasis web yang menan
 
 ### Fitur Utama
 - Manajemen menu
-- Sistem pemesanan
-- Proses pembayaran
-- Manajemen meja
-- Pelaporan
+- Sistem pemesanan dengan antarmuka modern
+- Proses pembayaran dengan halaman sukses
+- Manajemen meja dengan status real-time
+- Pelaporan detail dengan filter periode
 - Multi-level user access
+- Input pelanggan baru yang disederhanakan
+- Tampilan modal yang responsif
 
 ## Struktur Database
 
@@ -127,22 +129,24 @@ CREATE TABLE transaksi (
 
 ### 1. Proses Pemesanan
 1. Pelanggan datang dan memilih meja
-2. Waiter mencatat pesanan pelanggan
-3. Sistem membuat kode pesanan unik
-4. Status meja diupdate menjadi 'terpakai'
-5. Pesanan masuk ke sistem
+2. Waiter mencatat data pelanggan dengan form yang disederhanakan
+3. Waiter mencatat pesanan pelanggan
+4. Sistem membuat kode pesanan unik
+5. Status meja diupdate menjadi 'terpakai'
+6. Pesanan masuk ke sistem
 
 ### 2. Proses Pembayaran
 1. Kasir menerima pesanan yang sudah selesai
 2. Sistem menghitung total pembayaran
 3. Kasir input jumlah pembayaran
 4. Sistem menghitung kembalian/kekurangan
-5. Transaksi selesai, status meja kembali 'kosong'
+5. Transaksi selesai dengan tampilan halaman sukses
+6. Status meja kembali 'kosong'
 
 ### 3. Pelaporan
-1. Owner dapat melihat laporan penjualan
-2. Sistem menyediakan data transaksi
-3. Laporan dapat dicetak
+1. Owner dapat melihat laporan penjualan dengan filter periode
+2. Sistem menyediakan data transaksi terperinci
+3. Laporan dapat dicetak dengan format yang rapi
 
 ## Implementasi
 
@@ -156,22 +160,26 @@ CREATE TABLE transaksi (
 #### 2. Manajemen Menu (pages/admin/menu.php)
 - CRUD operasi untuk menu
 - Validasi input
+- Modal dengan tampilan yang disempurnakan
 
-#### 4. Manajemen Meja (pages/admin/meja.php)
+#### 3. Manajemen Meja (pages/admin/meja.php)
 - CRUD operasi untuk meja
+- Status meja real-time
 - Validasi input
 
-
-#### 5. Sistem Pemesanan (pages/waiter/)
-- Form pemesanan
+#### 4. Sistem Pemesanan (pages/waiter/)
+- Form pemesanan yang intuitif
+- Input pelanggan yang disederhanakan
 - Generasi kode pesanan
-- Update status meja
+- Update status meja otomatis
 
-#### 4. Proses Pembayaran (pages/kasir/)
-- Kalkulasi total
+#### 5. Proses Pembayaran (pages/kasir/)
+- Kalkulasi total otomatis
 - Validasi pembayaran
+- Halaman sukses pembayaran
 - Cetak struk
 
-#### 5. Pelaporan (pages/owner/)
-- Generate laporan
+#### 6. Pelaporan (pages/owner/)
+- Generate laporan detail
 - Filter berdasarkan periode
+- Tampilan data yang terorganisir

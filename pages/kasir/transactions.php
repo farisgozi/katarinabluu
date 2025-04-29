@@ -28,18 +28,22 @@ $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d');
 $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
 
 // Get transactions for the selected date range
-$transactions_query = "SELECT t.*, p.kode_pesanan, m.Nomeja, 
-    GROUP_CONCAT(DISTINCT CONCAT(menu.Namamenu, ' x', p2.jumlah) SEPARATOR ', ') as items,
-    SUM(p2.jumlah * menu.Harga) as total_amount, -- Ini adalah total harga pesanan
-    t.bayar - SUM(p2.jumlah * menu.Harga) as kembalian -- Hitung kembalian
-FROM transaksi t 
-JOIN pesanan p ON t.idpesanan = p.idpesanan 
+$transactions_query = "SELECT 
+    MIN(t.created_at) as created_at,
+    p.kode_pesanan,
+    m.Nomeja,
+    GROUP_CONCAT(DISTINCT CONCAT(menu.Namamenu, ' x', p.jumlah) SEPARATOR ', ') as items,
+    SUM(p.jumlah * menu.Harga) as total_amount,
+    MAX(t.bayar) as bayar,
+    MAX(t.bayar) - SUM(p.jumlah * menu.Harga) as kembalian,
+    MIN(p.idpesanan) as idpesanan
+FROM transaksi t
+JOIN pesanan p ON t.idpesanan = p.idpesanan
 JOIN meja m ON p.meja_id = m.id
-JOIN pesanan p2 ON p2.kode_pesanan = p.kode_pesanan -- Join ulang untuk detail item
-JOIN menu ON p2.idmenu = menu.idmenu
+JOIN menu ON p.idmenu = menu.idmenu
 WHERE DATE(t.created_at) BETWEEN ? AND ?
-GROUP BY t.idtransaksi -- Group berdasarkan transaksi unik
-ORDER BY t.created_at DESC";
+GROUP BY p.kode_pesanan, m.Nomeja
+ORDER BY created_at DESC";
 
 $stmt_transactions = $conn->prepare($transactions_query);
 if ($stmt_transactions === false) {
@@ -360,11 +364,11 @@ $revenue = $revenue_data['total_revenue'] ?? 0;
                                                     <td class="text-end">Rp <?php echo number_format($transaction['bayar'] ?? 0, 0, ',', '.'); ?></td>
                                                     <td class="text-end">Rp <?php echo number_format($transaction['kembalian'] ?? 0, 0, ',', '.'); ?></td>
                                                     <td class="text-center">
-                                                    <a href="print_receipt.php?id=<?php echo $transaction['idpesanan']; ?>"
-                                                           class="btn btn-sm btn-primary btn-action" 
-                                                           title="Cetak Struk">
-                                                            <i class="bi bi-printer-fill"></i>
-                                                        </a>
+                                                    <a href="print_receipt.php?id=<?php echo htmlspecialchars($transaction['idpesanan']); ?>" 
+                                                        class="btn btn-sm btn-primary btn-action" 
+                                                        title="Cetak Struk">
+                                                        <i class="bi bi-printer-fill"></i>
+                                                    </a>
                                                         </td>
                                                 </tr>
                                             <?php endwhile; ?>

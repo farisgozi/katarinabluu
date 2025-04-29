@@ -22,8 +22,14 @@ if (!isset($_GET['id'])) {
 
 $order_id = $_GET['id'];
 
-// Get order information
-$order_query = "SELECT p.*, m.Nomeja, t.total, t.bayar, t.created_at as transaction_date
+// Get order information with total from all items
+$order_query = "SELECT p.*, m.Nomeja, t.bayar, t.created_at as transaction_date,
+    (SELECT SUM(p2.jumlah * menu.Harga)
+     FROM pesanan p2
+     JOIN menu ON p2.idmenu = menu.idmenu
+     WHERE p2.meja_id = p.meja_id
+     AND EXISTS (SELECT 1 FROM transaksi t2 WHERE t2.idpesanan = p2.idpesanan)
+    ) as total
 FROM pesanan p 
 JOIN meja m ON p.meja_id = m.id 
 JOIN transaksi t ON p.idpesanan = t.idpesanan 
@@ -135,7 +141,6 @@ if (!$order) {
                             <h2 class="card-title mb-4">Pembayaran Berhasil!</h2>
                             <p class="card-text mb-2">Nomor Meja: <?php echo htmlspecialchars($order['Nomeja']); ?></p>
                             <p class="card-text mb-2">Kode Pesanan: <?php echo htmlspecialchars($order['kode_pesanan']); ?></p>
-                            <p class="card-text mb-4">Total Pembayaran: Rp <?php echo number_format($order['total'], 0, ',', '.'); ?></p>
                             
                             <div class="d-grid gap-3">
                                 <a href="print_receipt.php?id=<?php echo $order_id; ?>" class="btn btn-primary">

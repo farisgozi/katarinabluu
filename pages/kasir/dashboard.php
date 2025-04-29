@@ -28,15 +28,15 @@ $orders_query = "SELECT
     m.id as meja_id, 
     m.Nomeja,
     MIN(p.created_at) as created_at,
-    p.kode_pesanan,
-    GROUP_CONCAT(DISTINCT p.idpesanan) as idpesanan,
+    GROUP_CONCAT(DISTINCT p.kode_pesanan) as kode_pesanan,
+    MIN(p.idpesanan) as idpesanan,
     GROUP_CONCAT(DISTINCT CONCAT(menu.Namamenu, ' x', p.jumlah) SEPARATOR ', ') as items,
     SUM(p.jumlah * menu.Harga) as total_amount
 FROM meja m
 JOIN pesanan p ON p.meja_id = m.id
 JOIN menu ON p.idmenu = menu.idmenu
 WHERE NOT EXISTS (SELECT 1 FROM transaksi t WHERE t.idpesanan = p.idpesanan)
-GROUP BY m.id, m.Nomeja, p.kode_pesanan
+GROUP BY m.id, m.Nomeja
 ORDER BY m.Nomeja, created_at";
 $orders_result = $conn->query($orders_query);
 // Hitung jumlah pesanan menunggu pembayaran
@@ -371,11 +371,9 @@ $revenue = $revenue_data['total_revenue'] ?? 0;
                                                 <td><?php echo nl2br(htmlspecialchars($order['items'])); ?></td>
                                                 <td>Rp <?php echo number_format($order['total_amount'] ?? 0, 0, ',', '.'); ?></td>
                                                 <td>
-                                                <?php foreach($idpesanan_array as $index => $idpesanan): ?>
-                                                    <a href="process_payment.php?id=<?php echo $idpesanan; ?>" class="btn btn-sm btn-primary mb-1" title="Proses Pembayaran">
-                                                        <i class="bi bi-cash-stack"></i> Bayar <?php echo $kode_pesanan_array[$index]; ?>
-                                                    </a><br>
-                                                <?php endforeach; ?>
+                                                <a href="process_payment.php?id=<?php echo $order['idpesanan']; ?>" class="btn btn-sm btn-primary" title="Proses Pembayaran">
+                                                    <i class="bi bi-cash-stack"></i> Bayar
+                                                </a>
                                                 </td>
                                             </tr>
                                         <?php endwhile; endif; ?>
